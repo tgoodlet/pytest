@@ -1176,15 +1176,17 @@ class Config(object):
 
         :arg name: name of the option.  You may also specify
             the literal ``--OPT`` option instead of the "dest" option name.
-        :arg default: default value if no option of that name exists.
+        :arg default: default value if no option of that name exists or it's
+            value is None.
         :arg skip: if True raise pytest.skip if option does not exists
             or has a None value.
         """
         name = self._opt2dest.get(name, name)
         try:
             val = getattr(self.option, name)
-            if val is None and skip:
-                raise AttributeError(name)
+            if val is None:
+                if skip or default is not notset:
+                    raise AttributeError(name)
             return val
         except AttributeError:
             if default is not notset:
