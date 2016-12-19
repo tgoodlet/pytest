@@ -167,6 +167,15 @@ class TestConfigAPI:
             config.getvalue('x')
         assert config.getoption("x", 1) == 1
 
+    def test_getoption_or_default(self, testdir):
+        testdir.makeconftest("""
+            def pytest_addoption(parser):
+                parser.addoption("--hello")
+        """)
+        config = testdir.parseconfig()
+        assert config.getvalue('hello') is None
+        assert config.getoption("hello", 1) == 1
+
     def test_getconftest_pathlist(self, testdir, tmpdir):
         somepath = tmpdir.join("x", "y", "z")
         p = tmpdir.join("conftest.py")
